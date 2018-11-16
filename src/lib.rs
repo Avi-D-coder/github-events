@@ -1,4 +1,4 @@
-/// Feed Event API types as described in github [docs](https://developer.github.com/v3/activity/events/types).
+/// Feed Event API types and docs taken from [github docs](https://developer.github.com/v3/activity/events/types).
 ///
 /// Utilized [json_typegen](http://vestera.as/json_typegen/) in creation.
 #[macro_use]
@@ -7,9 +7,30 @@ extern crate serde_json;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 enum Event {
+    /// Triggered when a check run is `created`, `rerequested`, `completed`, or has a
+    /// `requested_action`. The checks permission allows you to use the checks API. If you plan to
+    /// create or modify check runs, your GitHub App will need to have the `checks:write` permission.
+    /// If you only plan to consume check runs, your GitHub App only needs the `checks:read`
+    /// permission.
+    ///
+    /// GitHub Apps with the `checks:write` permission will receive the `rerequested` action without
+    /// subscribing to the check_run webhook event. The `rerequested` action occurs when someone
+    /// requests to re-run your app's check from the pull request UI. See "About status checks" for
+    /// more details about the GitHub UI. When you receive a `rerequested` action, you'll need to
+    /// create a new check run. Only the GitHub App that someone requests to re-run the check will
+    /// receive the `rerequested` payload. Similarly, only the GitHub App someone requests to perform
+    /// an action specified by the app will receive the `requested_action` payload.
+    ///
+    /// GitHub Apps that have the `checks:read` permission and subscribe to the `check_run` webhook
+    /// event receive the `created` and `completed` action payloads for all check runs in the app's
+    /// repository. Repositories and organizations that subscribe to the `check_run` webhook event
+    /// only receive `created` and `completed` event actions.
     CheckRunEvent {
+        /// The action performed. Can be `created,` `rerequested,` `completed,` or `requested_action.`
         action: String,
+        /// The [`check_run`](https://developer.github.com/v3/checks/runs/).
         check_run: CheckRun,
+        /// 
         repository: Repository,
         organization: Organization,
         sender: Sender,
@@ -17,18 +38,26 @@ enum Event {
     },
 }
 
+/// FIXME add docs [`check_run`](https://developer.github.com/v3/checks/runs/)
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct CheckRun {
+    /// The id of the check suite that this check run is part of.
     id: i64,
     head_sha: String,
     external_id: String,
     url: String,
     html_url: String,
+    /// The current status of the check run. Can be `queued,` `in_progress,` or `completed.`
+    // FIXME should be enum
     status: String,
-    conclusion: String,
+    /// The result of the completed `check` run. Can be one of `success,` `failure,` `neutral,` `cancelled,`
+    /// timed_out, or `action_required.` This value will be `null` until the check run has `completed.`
+    // FIXME should be enum
+    conclusion: Option<String>,
     started_at: String,
     completed_at: String,
     output: Output,
+    /// The name of the check run.
     name: String,
     check_suite: CheckSuite,
     app: App2,
