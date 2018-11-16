@@ -1,0 +1,11 @@
+[package]
+name = "github-events"
+version = "0.0.1"
+authors = ["Avi ד <avi.the.coder@gmail.com>"]
+keywords = ["github", "events", "feed", "json"]
+categories = ["parsing"]
+repository = "https://github.com/Avi-D-coder/github-events"
+readme = "README.md"
+description = "rust types for https://developer.github.com/v3/activity/events/types/"
+
+[dependencies]
