@@ -63,6 +63,18 @@ enum Event {
         /// The [check_suite](https://developer.github.com/v3/checks/suites/).
         check_suite: CheckSuite,
     },
+
+    /// Triggered when a [commit
+    /// comment](https://developer.github.com/v3/repos/comments/#list-commit-comments-for-a-repository) is created.
+    CommitCommentEvent {
+        action: String,
+        /// The
+        /// [comment](https://developer.github.com/v3/repos/comments/#list-commit-comments-for-a-repository) itself.
+        // FIXME
+        comment: Comment,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 /// FIXME add docs [`check_run`](https://developer.github.com/v3/checks/runs/)
@@ -371,4 +383,44 @@ struct Author {
 struct Committer {
     name: String,
     email: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct User {
+    login: String,
+    id: i64,
+    node_id: String,
+    avatar_url: String,
+    gravatar_id: String,
+    url: String,
+    html_url: String,
+    followers_url: String,
+    following_url: String,
+    gists_url: String,
+    starred_url: String,
+    subscriptions_url: String,
+    organizations_url: String,
+    repos_url: String,
+    events_url: String,
+    received_events_url: String,
+    #[serde(rename = "type")]
+    type_field: String,
+    site_admin: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Comment {
+    url: String,
+    html_url: String,
+    id: i64,
+    node_id: String,
+    user: User,
+    position: ::serde_json::Value,
+    line: ::serde_json::Value,
+    path: ::serde_json::Value,
+    commit_id: String,
+    created_at: String,
+    updated_at: String,
+    author_association: String,
+    body: String,
 }
