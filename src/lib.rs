@@ -30,11 +30,38 @@ enum Event {
         action: String,
         /// The [`check_run`](https://developer.github.com/v3/checks/runs/).
         check_run: CheckRun,
-        /// 
+        ///
         repository: Repository,
         organization: Organization,
         sender: Sender,
         installation: Installation,
+    },
+
+    /// Triggered when a check suite is `completed`, `requested`, or `rerequested`. The checks permission
+    /// allows you to use the Checks API. If you plan to create or modify check runs, your GitHub
+    /// App will need to have the checks:write permission. If you only plan to consume check runs,
+    /// your GitHub App only needs the checks:read permission.
+    ///
+    /// GitHub Apps with the checks:write permission will receive the requested and `rerequested`
+    /// action payloads without subscribing to the `check_suite` webhook event. The `requested` action
+    /// triggers when new code is pushed to the app's repository. A `rerequested` action occurs when
+    /// someone requests to re-run the entire check suite from the pull request UI. See "[About
+    /// status checks](https://help.github.com/articles/about-status-checks#checks)" for more
+    /// details about the GitHub UI. When you receive the `requested` or
+    /// `rerequested` action events, you'll need to
+    /// [create a new check run](https://developer.github.com/v3/checks/runs/#create-a-check-run).
+    /// Only the GitHub App that
+    /// is being asked to run a check will receive the `requested` and `rerequested` payloads.
+    ///
+    /// GitHub Apps that have the `checks:read` permission and subscribe to the `check_suite` webhook
+    /// event receive the completed action payload for all check suites in the app's repository.
+    /// Repositories and organizations that subscribe to the `check_suite` webhook event only receive
+    /// the `completed` event action.
+    CheckSuiteEvent {
+        /// The action performed. Can be `created,` `rerequested,` `completed,` or `requested_action.`
+        action: String,
+        /// The [check_suite](https://developer.github.com/v3/checks/suites/).
+        check_suite: CheckSuite,
     },
 }
 
@@ -76,13 +103,23 @@ struct Output {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct CheckSuite {
     id: i64,
+    /// The head branch name the changes are on.
     head_branch: String,
+    /// The SHA of the most recent commit for this check suite.
     head_sha: String,
+    /// The summary status for all check runs that are part of the check suite. Can be `requested`, `in_progress`, or `completed`.
     status: String,
+    /// The summary conclusion for all check runs that are part of the check suite. Can be one
+    /// souccess`, `failure`, `neutral`, `cancelled`, `timed_out`, or `action_required`. This value will be
+    /// `null` until the check run has `completed`.
     conclusion: String,
+    /// URL that points to the check suite API resource.
     url: String,
     before: String,
     after: String,
+    /// An array of pull requests that match this check suite. A pull request matches a check suiif
+    /// they have the same `head_sha` and head_branch. When the check suite's `head_branch` is unknown
+    /// (`null`) the `pull_requests` array will be empty.
     pull_requests: Vec<::serde_json::Value>,
     app: App,
     created_at: String,
@@ -302,4 +339,36 @@ struct Sender {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct Installation {
     id: i64,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct GeneratedType {
+    action: String,
+    check_suite: CheckSuite,
+    repository: Repository,
+    organization: Organization,
+    sender: Sender,
+    installation: Installation,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct HeadCommit {
+    id: String,
+    tree_id: String,
+    message: String,
+    timestamp: String,
+    author: Author,
+    committer: Committer,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Author {
+    name: String,
+    email: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Committer {
+    name: String,
+    email: String,
 }
