@@ -75,6 +75,25 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Represents a created repository, branch, or tag.
+    /// Note: webhooks will not receive this event for created repositories.
+    /// Additionally, webhooks will not receive this event for tags if more than three tags are pushed at once.
+    CreateEvent {
+
+        /// The git ref (or `null` if only a repository was created).
+        #[serde(rename = "ref")]
+        ref_field: String,
+        /// The object that was created. Can be one of "repository", "branch", or "tag"
+        ref_type: String,
+        /// The name of the repository's default branch (usually `master`).
+        master_branch: String,
+        /// The repository's current description.
+        description: ::serde_json::Value,
+        pusher_type: String,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 /// FIXME add docs [`check_run`](https://developer.github.com/v3/checks/runs/)
