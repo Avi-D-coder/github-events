@@ -94,6 +94,17 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Represents a [deleted branch or tag](https://developer.github.com/v3/git/refs/#delete-a-reference).
+    /// Note: webhooks will not receive this event for tags if more than three tags are deleted at once.
+    DeleteEvent {
+        /// The full git ref.
+        #[serde(rename = "ref")]
+        ref_field: String,
+        /// The object that was deleted. Can be "branch" or "tag".
+        ref_type: String,
+        pusher_type: String,
+    }
 }
 
 /// FIXME add docs [`check_run`](https://developer.github.com/v3/checks/runs/)
