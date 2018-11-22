@@ -80,7 +80,6 @@ enum Event {
     /// Note: webhooks will not receive this event for created repositories.
     /// Additionally, webhooks will not receive this event for tags if more than three tags are pushed at once.
     CreateEvent {
-
         /// The git ref (or `null` if only a repository was created).
         #[serde(rename = "ref")]
         ref_field: String,
@@ -104,7 +103,18 @@ enum Event {
         /// The object that was deleted. Can be "branch" or "tag".
         ref_type: String,
         pusher_type: String,
-    }
+    },
+
+    /// Represents a [deployment](https://developer.github.com/v3/repos/deployments/#list-deployments).
+    ///
+    /// Events of this type are not visible in timelines. These events are only used to trigger hooks.
+    DeploymentEvent {
+        /// The [deployment](https://developer.github.com/v3/repos/deployments/#list-deployments).
+        deployment: Deployment,
+        /// The [repository](https://developer.github.com/v3/repos/) for this deployment.
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 /// FIXME add docs [`check_run`](https://developer.github.com/v3/checks/runs/)
@@ -149,17 +159,18 @@ struct CheckSuite {
     head_branch: String,
     /// The SHA of the most recent commit for this check suite.
     head_sha: String,
-    /// The summary status for all check runs that are part of the check suite. Can be `requested`, `in_progress`, or `completed`.
+    /// The summary status for all check runs that are part of the check suite.
+    /// Can be `requested`, `in_progress`, or `completed`.
     status: String,
     /// The summary conclusion for all check runs that are part of the check suite. Can be one
-    /// souccess`, `failure`, `neutral`, `cancelled`, `timed_out`, or `action_required`. This value will be
-    /// `null` until the check run has `completed`.
+    /// `success`, `failure`, `neutral`, `cancelled`, `timed_out`, or `action_required`.
+    /// This value will be `null` until the check run has `completed`.
     conclusion: String,
     /// URL that points to the check suite API resource.
     url: String,
     before: String,
     after: String,
-    /// An array of pull requests that match this check suite. A pull request matches a check suiif
+    /// An array of pull requests that match this check suite. A pull request matches a check suite if
     /// they have the same `head_sha` and head_branch. When the check suite's `head_branch` is unknown
     /// (`null`) the `pull_requests` array will be empty.
     pull_requests: Vec<::serde_json::Value>,
@@ -453,4 +464,50 @@ struct Comment {
     updated_at: String,
     author_association: String,
     body: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Deployment {
+    url: String,
+    id: i64,
+    node_id: String,
+    sha: String,
+    #[serde(rename = "ref")]
+    ref_field: String,
+    task: String,
+    payload: Payload,
+    environment: String,
+    description: ::serde_json::Value,
+    creator: Creator,
+    created_at: String,
+    updated_at: String,
+    statuses_url: String,
+    repository_url: String,
+}
+
+/// FIXME Empty?
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Payload {}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Creator {
+    login: String,
+    id: i64,
+    node_id: String,
+    avatar_url: String,
+    gravatar_id: String,
+    url: String,
+    html_url: String,
+    followers_url: String,
+    following_url: String,
+    gists_url: String,
+    starred_url: String,
+    subscriptions_url: String,
+    organizations_url: String,
+    repos_url: String,
+    events_url: String,
+    received_events_url: String,
+    #[serde(rename = "type")]
+    type_field: String,
+    site_admin: bool,
 }
