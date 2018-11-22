@@ -139,6 +139,21 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when someone revokes their authorization of a GitHub App. A GitHub App receives
+    /// this webhook by default and cannot unsubscribe from this event.
+    /// This event is not available in the [Events API](https://developer.github.com/v3/activity/events/).
+    ///
+    /// Anyone can revoke their authorization of a GitHub App from their
+    /// [GitHub account settings page](https://github.com/settings/apps/authorizations).
+    /// Revoking the authorization of a GitHub App does not uninstall the GitHub App.
+    /// You should program your GitHub App so that when it receives this webhook,
+    /// it stops calling the API on behalf of the person who revoked the token.
+    /// If your GitHub App continues to use a revoked access token,
+    /// it will receive the `401 Bad Credentials` error.
+    /// For details about user-to-server requests, which require GitHub App authorization,
+    /// see ["Identifying and authorizing users for GitHub Apps.](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/)"
+    GitHubAppAuthorizationEvent { action: String, sender: Sender },
 }
 
 /// FIXME add docs [`check_run`](https://developer.github.com/v3/checks/runs/)
