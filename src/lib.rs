@@ -154,6 +154,13 @@ enum Event {
     /// For details about user-to-server requests, which require GitHub App authorization,
     /// see ["Identifying and authorizing users for GitHub Apps.](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/)"
     GitHubAppAuthorizationEvent { action: String, sender: Sender },
+
+    /// Triggered when a Wiki page is created or updated.
+    GollumEvent {
+        pages: Vec<Page>,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 /// FIXME add docs [`check_run`](https://developer.github.com/v3/checks/runs/)
@@ -608,4 +615,19 @@ struct Forkee {
     watchers: i64,
     default_branch: String,
     public: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Page {
+    /// The name of the page.
+    page_name: String,
+    /// The current page title.
+    title: String,
+    summary: ::serde_json::Value,
+    /// The action that was performed on the page. Can be "created" or "edited".
+    action: String,
+    /// The latest commit SHA of the page.
+    sha: String,
+    /// Points to the HTML wiki page.
+    html_url: String,
 }
