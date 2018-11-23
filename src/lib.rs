@@ -161,6 +161,16 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a GitHub App has been installed or uninstalled.
+    InstallationEvent {
+        /// The action that was performed. Can be either "created" or "deleted".
+        action: String,
+        /// The installation itself.
+        installation: Installation,
+        repositories: Vec<Repository>,
+        sender: Sender,
+    },
 }
 
 /// FIXME add docs [`check_run`](https://developer.github.com/v3/checks/runs/)
@@ -402,6 +412,19 @@ struct Sender {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct Installation {
     id: i64,
+    account: Account,
+    repository_selection: String,
+    access_tokens_url: String,
+    repositories_url: String,
+    html_url: String,
+    app_id: i64,
+    target_id: i64,
+    target_type: String,
+    permissions: Permissions,
+    events: Vec<String>,
+    created_at: i64,
+    updated_at: i64,
+    single_file_name: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -630,4 +653,34 @@ struct Page {
     sha: String,
     /// Points to the HTML wiki page.
     html_url: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Account {
+    login: String,
+    id: i64,
+    node_id: String,
+    avatar_url: String,
+    gravatar_id: String,
+    url: String,
+    html_url: String,
+    followers_url: String,
+    following_url: String,
+    gists_url: String,
+    starred_url: String,
+    subscriptions_url: String,
+    organizations_url: String,
+    repos_url: String,
+    events_url: String,
+    received_events_url: String,
+    #[serde(rename = "type")]
+    type_field: String,
+    site_admin: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Permissions {
+    metadata: String,
+    contents: String,
+    issues: String,
 }
