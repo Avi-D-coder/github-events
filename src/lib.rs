@@ -168,7 +168,21 @@ enum Event {
         action: String,
         /// The installation itself.
         installation: Installation,
-        repositories: Vec<Repository>,
+        repositories: Vec<PartialRepository>,
+        sender: Sender,
+    },
+
+    InstallationRepositoriesEvent {
+        /// The action that was performed. Can be either "added" or "removed".
+        action: String,
+        /// The installation itself.
+        installation: Installation,
+        /// The choice of repositories the installation is on. Can be either "selected" or "all".
+        repository_selection: String,
+        /// An array of repository objects, which were added to the installation.
+        repositories_added: Vec<PartialRepository>,
+        /// An array of repository objects, which were removed from the installation.
+        repositories_removed: Vec<RepositoriesRemoved>,
         sender: Sender,
     },
 }
@@ -683,4 +697,20 @@ struct Permissions {
     metadata: String,
     contents: String,
     issues: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct PartialRepository {
+    id: i64,
+    name: String,
+    full_name: String,
+    private: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct RepositoriesRemoved {
+    id: i64,
+    name: String,
+    full_name: String,
+    private: bool,
 }
