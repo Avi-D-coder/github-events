@@ -153,7 +153,10 @@ enum Event {
     /// it will receive the `401 Bad Credentials` error.
     /// For details about user-to-server requests, which require GitHub App authorization,
     /// see ["Identifying and authorizing users for GitHub Apps.](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/)"
-    GitHubAppAuthorizationEvent { action: String, sender: Sender },
+    GitHubAppAuthorizationEvent {
+        action: String,
+        sender: Sender,
+    },
 
     /// Triggered when a Wiki page is created or updated.
     GollumEvent {
@@ -200,6 +203,22 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    IssueEvent(IssueEvent),
+}
+
+struct IssueEvent {
+    /// The action that was performed. Can be one of `opened`, `edited`, `deleted`, `transferred`, `closed`,
+    /// `reopened`, `assigned`, `unassigned`, `labeled`, `unlabeled`, `milestoned`, or `demilestoned`.
+    action: String,
+    /// The [issue](https://developer.github.com/v3/issues) itself.
+    issue: Issue,
+    /// The changes to the issue if the action was "edited".
+    /// `changes[title][from]: String` The previous version of the title if the action was "edited".
+    /// `changes[body][from]:String` The previous version of the body if the action was "edited".
+    changes: Option<::serde_json::Value>,
+    repository: Repository,
+    sender: Sender,
 }
 
 /// FIXME add docs [`check_run`](https://developer.github.com/v3/checks/runs/)
@@ -721,9 +740,11 @@ struct Issue {
     number: i64,
     title: String,
     user: User,
+    /// The optional labels that were added or removed from the issue.
     labels: Vec<Label>,
     state: String,
     locked: bool,
+    /// The optional user who was assigned or unassigned from the issue.
     assignee: ::serde_json::Value,
     assignees: Vec<::serde_json::Value>,
     milestone: ::serde_json::Value,
