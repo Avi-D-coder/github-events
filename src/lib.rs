@@ -205,6 +205,19 @@ enum Event {
     },
 
     IssueEvent(IssueEvent),
+
+    LabelEvent {
+        /// The action that was performed. Can be "created", "edited", or "deleted".
+        action: String,
+        /// The label that was added.
+        label: Label,
+        /// The changes to the label if the action was "edited".
+        /// `changes[name][from]: String` The previous version of the name if the action was "edited".
+        /// `changes[color][from]: String` The previous version of the color if the action was "edited".
+        changes: Option<serde_json::Value>,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 struct IssueEvent {
