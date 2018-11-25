@@ -239,6 +239,23 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a user is added or removed from a team.
+    ///
+    /// Events of this type are not visible in timelines.
+    /// These events are only used to trigger hooks.
+    MembershipEvent {
+        /// The action that was performed. Can be "added" or "removed".
+        action: String,
+        /// The scope of the membership. Currently, can only be "team".
+        scope: String,
+        /// The [user](https://developer.github.com/v3/users/) that was added or removed.
+        member: Member,
+        sender: Sender,
+        /// The [team](https://developer.github.com/v3/teams/) for the membership.
+        team: Team,
+        organization: Organization,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -833,4 +850,18 @@ struct MemberEventChanges {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct Permission {
     from: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Team {
+    name: String,
+    id: i64,
+    node_id: String,
+    slug: String,
+    description: String,
+    privacy: String,
+    url: String,
+    members_url: String,
+    repositories_url: String,
+    permission: String,
 }
