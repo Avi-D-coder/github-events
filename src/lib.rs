@@ -18,7 +18,8 @@ enum Event {
     /// requests to re-run your app's check from the pull request UI. See "About status checks" for
     /// more details about the GitHub UI. When you receive a `rerequested` action, you'll need to
     /// create a new check run. Only the GitHub App that someone requests to re-run the check will
-    /// receive the `rerequested` payload. Similarly, only the GitHub App someone requests to perform
+    /// receive the `rerequested` payload. Similarly,
+    /// only the GitHub App someone requests to perform
     /// an action specified by the app will receive the `requested_action` payload.
     ///
     /// GitHub Apps that have the `checks:read` permission and subscribe to the `check_run` webhook
@@ -26,7 +27,8 @@ enum Event {
     /// repository. Repositories and organizations that subscribe to the `check_run` webhook event
     /// only receive `created` and `completed` event actions.
     CheckRunEvent {
-        /// The action performed. Can be `created,` `rerequested,` `completed,` or `requested_action.`
+        /// The action performed. Can be `created,` `rerequested,` `completed,`
+        /// or `requested_action.`
         action: String,
         /// The [`check_run`](https://developer.github.com/v3/checks/runs/).
         check_run: CheckRun,
@@ -43,7 +45,8 @@ enum Event {
     /// your GitHub App only needs the checks:read permission.
     ///
     /// GitHub Apps with the checks:write permission will receive the requested and `rerequested`
-    /// action payloads without subscribing to the `check_suite` webhook event. The `requested` action
+    /// action payloads without subscribing to the `check_suite` webhook event.
+    /// The `requested` action
     /// triggers when new code is pushed to the app's repository. A `rerequested` action occurs when
     /// someone requests to re-run the entire check suite from the pull request UI. See "[About
     /// status checks](https://help.github.com/articles/about-status-checks#checks)" for more
@@ -53,12 +56,15 @@ enum Event {
     /// Only the GitHub App that
     /// is being asked to run a check will receive the `requested` and `rerequested` payloads.
     ///
-    /// GitHub Apps that have the `checks:read` permission and subscribe to the `check_suite` webhook
+    /// GitHub Apps that have the `checks:read` permission and
+    /// subscribe to the `check_suite` webhook
     /// event receive the completed action payload for all check suites in the app's repository.
-    /// Repositories and organizations that subscribe to the `check_suite` webhook event only receive
+    /// Repositories and organizations that subscribe to the `check_suite`
+    /// webhook event only receive
     /// the `completed` event action.
     CheckSuiteEvent {
-        /// The action performed. Can be `created,` `rerequested,` `completed,` or `requested_action.`
+        /// The action performed. Can be `created,` `rerequested,` `completed,`
+        /// or `requested_action.`
         action: String,
         /// The [check_suite](https://developer.github.com/v3/checks/suites/).
         check_suite: CheckSuite,
@@ -78,7 +84,8 @@ enum Event {
 
     /// Represents a created repository, branch, or tag.
     /// Note: webhooks will not receive this event for created repositories.
-    /// Additionally, webhooks will not receive this event for tags if more than three tags are pushed at once.
+    /// Additionally, webhooks will not receive this event for tags
+    /// if more than three tags are pushed at once.
     CreateEvent {
         /// The git ref (or `null` if only a repository was created).
         #[serde(rename = "ref")]
@@ -95,7 +102,8 @@ enum Event {
     },
 
     /// Represents a [deleted branch or tag](https://developer.github.com/v3/git/refs/#delete-a-reference).
-    /// Note: webhooks will not receive this event for tags if more than three tags are deleted at once.
+    /// Note: webhooks will not receive this event for tags
+    /// if more than three tags are deleted at once.
     DeleteEvent {
         /// The full git ref.
         #[serde(rename = "ref")]
@@ -218,8 +226,22 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a user accepts an invitation or is removed as a collaborator to a repository,
+    /// or has their permissions changed.
+    MemberEvent {
+        /// The action that was performed. Can be one of `added`, `deleted`, or `edited`.
+        action: String,
+        /// The user that was added.
+        member: Member,
+        /// The changes to the collaborator permissions if the action was `edited`.
+        changes: MemberEventChanges,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct IssueEvent {
     /// The action that was performed. Can be one of `opened`, `edited`, `deleted`, `transferred`, `closed`,
     /// `reopened`, `assigned`, `unassigned`, `labeled`, `unlabeled`, `milestoned`, or `demilestoned`.
@@ -777,4 +799,38 @@ struct Label {
     name: String,
     color: String,
     default: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Member {
+    login: String,
+    id: i64,
+    node_id: String,
+    avatar_url: String,
+    gravatar_id: String,
+    url: String,
+    html_url: String,
+    followers_url: String,
+    following_url: String,
+    gists_url: String,
+    starred_url: String,
+    subscriptions_url: String,
+    organizations_url: String,
+    repos_url: String,
+    events_url: String,
+    received_events_url: String,
+    #[serde(rename = "type")]
+    type_field: String,
+    site_admin: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct MemberEventChanges {
+    /// The previous permissions of the collaborator if the action was `edited`
+    permission: Permission,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Permission {
+    from: String,
 }
