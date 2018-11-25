@@ -305,6 +305,18 @@ enum Event {
         /// Information about the user who sent the blocking/unblocking request on behalf of the organization.
         sender: Sender,
     },
+
+    /// Represents an attempted build of a GitHub Pages site, whether successful or not.
+    ///
+    /// Triggered on push to a GitHub Pages enabled branch
+    /// (`gh-pages` for project pages, `master` for user and organization pages).
+    PageBuildEvent {
+        id: i64,
+        /// The page [build](https://developer.github.com/v3/repos/pages/#list-pages-builds) itself.
+        build: Build,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -942,4 +954,44 @@ struct Membership {
     role: String,
     organization_url: String,
     user: User,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Build {
+    url: String,
+    status: String,
+    error: Error,
+    pusher: Pusher,
+    commit: String,
+    duration: i64,
+    created_at: String,
+    updated_at: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Error {
+    message: ::serde_json::Value,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Pusher {
+    login: String,
+    id: i64,
+    node_id: String,
+    avatar_url: String,
+    gravatar_id: String,
+    url: String,
+    html_url: String,
+    followers_url: String,
+    following_url: String,
+    gists_url: String,
+    starred_url: String,
+    subscriptions_url: String,
+    organizations_url: String,
+    repos_url: String,
+    events_url: String,
+    received_events_url: String,
+    #[serde(rename = "type")]
+    type_field: String,
+    site_admin: bool,
 }
