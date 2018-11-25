@@ -275,6 +275,24 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a user is added, removed, or invited to an Organization.
+    /// Events of this type are not visible in timelines.
+    /// These events are only used to trigger organization hooks.
+    OrganizationEvent {
+        /// The action that was performed.
+        /// Can be one of: `member_added`, `member_removed`, or `member_invited`.
+        action: String,
+        /// The invitation for the user or email if the action is member_invited.
+        // FIXME What is the structure of an invitation.
+        invitation: Option<::serde_json::Value>,
+        /// The membership between the user and the organization.
+        /// Not present when the action is `member_invited`.
+        membership: Membership,
+        /// The organization in question.
+        organization: Organization,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -903,4 +921,13 @@ struct Milestone {
     updated_at: String,
     due_on: String,
     closed_at: ::serde_json::Value,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Membership {
+    url: String,
+    state: String,
+    role: String,
+    organization_url: String,
+    user: User,
 }
