@@ -293,6 +293,18 @@ enum Event {
         organization: Organization,
         sender: Sender,
     },
+
+    /// Triggered when an organization blocks or unblocks a user.
+    OrgBlockEvent {
+        /// The action performed. Can be `blocked` or `unblocked`.
+        action: String,
+        /// Information about the user that was blocked or unblocked.
+        blocked_user: User,
+        /// Information about the organization that blocked or unblocked the user.
+        organization: Organization,
+        /// Information about the user who sent the blocking/unblocking request on behalf of the organization.
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
