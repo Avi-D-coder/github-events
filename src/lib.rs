@@ -256,6 +256,25 @@ enum Event {
         team: Team,
         organization: Organization,
     },
+
+    /// Triggered when a milestone is created, closed, opened, edited, or deleted.
+    ///
+    /// Events of this type are not visible in timelines.
+    /// These events are only used to trigger hooks.
+    MilestoneEvent {
+        /// The action that was performed.
+        /// Can be one of `created`, `closed`, `opened`, `edited`, or `deleted`.
+        action: String,
+        /// The milestone itself.
+        milestone: Milestone,
+        /// The changes to the milestone if the action was edited.
+        /// changes[description][from]: String` The previous version of the description if the action was `edited`.
+        /// `changes[due_on][from]: String` The previous version of the due date if the action was `edited`.
+        /// `changes[title][from]: String` The previous version of the title if the action was `edited`.
+        changes: Option<::serde_json::Value>,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -864,4 +883,24 @@ struct Team {
     members_url: String,
     repositories_url: String,
     permission: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Milestone {
+    url: String,
+    html_url: String,
+    labels_url: String,
+    id: i64,
+    node_id: String,
+    number: i64,
+    title: String,
+    description: String,
+    creator: Creator,
+    open_issues: i64,
+    closed_issues: i64,
+    state: String,
+    created_at: String,
+    updated_at: String,
+    due_on: String,
+    closed_at: ::serde_json::Value,
 }
