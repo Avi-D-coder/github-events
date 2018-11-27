@@ -317,6 +317,24 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a [project card](https://developer.github.com/v3/projects/cards) is created, updated, moved, converted to an issue, or deleted.
+    ProjectCardEvent {
+        /// The action performed on the project card.
+        /// Can be "created", "edited", "converted", "moved", or "deleted".
+        action: String,
+        /// The changes to the project card if the action was "edited" or "converted".
+        /// `changes[note][from]: String` The previous version of the note if the action was "edited" or "converted".
+        // FIXME should be enum
+        changes: Option<serde_json::Value>,
+        /// The id of the card that this card now follows if the action was "moved".
+        /// Will be `null` if it is the first card in a column.
+        after_id: Option<isize>,
+        /// The [project card](https://developer.github.com/v3/projects/cards) itself.
+        project_card: ProjectCard,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -346,8 +364,10 @@ struct CheckRun {
     /// The current status of the check run. Can be `queued,` `in_progress,` or `completed.`
     // FIXME should be enum
     status: String,
-    /// The result of the completed `check` run. Can be one of `success,` `failure,` `neutral,` `cancelled,`
-    /// timed_out, or `action_required.` This value will be `null` until the check run has `completed.`
+    /// The result of the completed `check` run.
+    /// Can be one of `success,` `failure,` `neutral,` `cancelled,`
+    /// timed_out, or `action_required.`
+    /// This value will be `null` until the check run has `completed.`
     // FIXME should be enum
     conclusion: Option<String>,
     started_at: String,
@@ -994,4 +1014,18 @@ struct Pusher {
     #[serde(rename = "type")]
     type_field: String,
     site_admin: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct ProjectCard {
+    url: String,
+    project_url: String,
+    column_url: String,
+    column_id: i64,
+    id: i64,
+    node_id: String,
+    note: String,
+    creator: Creator,
+    created_at: String,
+    updated_at: String,
 }
