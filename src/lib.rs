@@ -351,6 +351,20 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a [project](https://developer.github.com/v3/projects/) is created, updated, closed, reopened, or deleted.
+    ProjectEvent {
+        /// The action that was performed on the project. Can be one of "created", "edited", "closed", "reopened", or "deleted".
+        action: String,
+        /// The changes to the project if the action was "edited".
+        /// `changes[name][from]: String` The previous version of the name if the action was "edited".
+        /// `changes[body][from]: String` The previous version of the body if the action was "edited".
+        changes: serde_json::Value,
+        /// The [project](https://developer.github.com/v3/projects/) itself.
+        project: Project,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1054,6 +1068,23 @@ struct ProjectColumn {
     id: i64,
     node_id: String,
     name: String,
+    created_at: String,
+    updated_at: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Project {
+    owner_url: String,
+    url: String,
+    html_url: String,
+    columns_url: String,
+    id: i64,
+    node_id: String,
+    name: String,
+    body: String,
+    number: i64,
+    state: String,
+    creator: Creator,
     created_at: String,
     updated_at: String,
 }
