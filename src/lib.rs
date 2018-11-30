@@ -335,6 +335,22 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a [project column](https://developer.github.com/v3/projects/columns) is created, updated, moved, or deleted.
+    ProjectColumnEvent {
+        /// The action that was performed on the project column.
+        /// Can be one of "created", "edited", "moved" or "deleted".
+        action: String,
+        /// The changes to the project column if the action was "edited".
+        /// `changes[name][from]: String` The previous version of the name if the action was "edited".
+        changes: serde_json::Value,
+        /// The id of the column that this column now follows if the action was "moved". Will be null if it is the first column in a project.
+        after_id: Option<isize>,
+        /// The [project column](https://developer.github.com/v3/projects/columns) itself.
+        project_column: ProjectColumn,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1026,6 +1042,18 @@ struct ProjectCard {
     node_id: String,
     note: String,
     creator: Creator,
+    created_at: String,
+    updated_at: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct ProjectColumn {
+    url: String,
+    project_url: String,
+    cards_url: String,
+    id: i64,
+    node_id: String,
+    name: String,
     created_at: String,
     updated_at: String,
 }
