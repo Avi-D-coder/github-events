@@ -365,6 +365,13 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a private repository is open sourced.
+    /// Without a doubt: the best GitHub event.
+    PublicEvent {
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
