@@ -372,6 +372,36 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a pull request is assigned, unassigned, labeled, unlabeled,
+    /// opened, edited, closed, reopened, or synchronized.
+    /// Also triggered when a pull request review is requested,
+    /// or when a review request is removed.
+    PullRequestEvent {
+        /// The action that was performed.
+        /// Can be one of "assigned", "unassigned", "review_requested",
+        /// "review_request_removed", "labeled", "unlabeled",
+        /// "opened", "edited", "closed", or "reopened".
+        ///
+        /// If the action is "closed" and the `merged` key is `false`,
+        /// the pull request was closed with unmerged commits.
+        /// If the action is "closed" and the `merged` key is `true`,
+        /// the pull request was merged.
+        ///
+        /// While webhooks are also triggered when a pull request is synchronized,
+        /// Events API timelines don't include pull request events with the "synchronize" action.
+        action: String,
+        /// The pull request number.
+        number: i64,
+        /// The changes to the comment if the action was "edited".
+        /// `changes[title][from]: String` The previous version of the title if the action was "edited".
+        /// `changes[body][from]: String` The previous version of the body if the action was "edited".
+        changes: serde_json::Value,
+        /// The [pull request](https://developer.github.com/v3/pulls) itself.
+        pull_request: PullRequest,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1094,4 +1124,91 @@ struct Project {
     creator: Creator,
     created_at: String,
     updated_at: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct PullRequest {
+    url: String,
+    id: i64,
+    node_id: String,
+    html_url: String,
+    diff_url: String,
+    patch_url: String,
+    issue_url: String,
+    number: i64,
+    state: String,
+    locked: bool,
+    title: String,
+    user: User,
+    body: String,
+    created_at: String,
+    updated_at: String,
+    closed_at: String,
+    merged_at: ::serde_json::Value,
+    merge_commit_sha: String,
+    assignee: ::serde_json::Value,
+    assignees: Vec<::serde_json::Value>,
+    requested_reviewers: Vec<::serde_json::Value>,
+    requested_teams: Vec<::serde_json::Value>,
+    labels: Vec<::serde_json::Value>,
+    milestone: ::serde_json::Value,
+    commits_url: String,
+    review_comments_url: String,
+    review_comment_url: String,
+    comments_url: String,
+    statuses_url: String,
+    head: Head,
+    base: Base,
+    _links: Links,
+    author_association: String,
+    merged: bool,
+    mergeable: bool,
+    rebaseable: bool,
+    mergeable_state: String,
+    merged_by: ::serde_json::Value,
+    comments: i64,
+    review_comments: i64,
+    maintainer_can_modify: bool,
+    commits: i64,
+    additions: i64,
+    deletions: i64,
+    changed_files: i64,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Head {
+    label: String,
+    #[serde(rename = "ref")]
+    ref_field: String,
+    sha: String,
+    user: User,
+    repo: Repository,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Base {
+    label: String,
+    #[serde(rename = "ref")]
+    ref_field: String,
+    sha: String,
+    user: User,
+    repo: Repository,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Links {
+    #[serde(rename = "self")]
+    self_field: Link,
+    html: Link,
+    issue: Link,
+    comments: Link,
+    review_comments: Link,
+    review_comment: Link,
+    commits: Link,
+    statuses: Link,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Link {
+    href: String,
 }
