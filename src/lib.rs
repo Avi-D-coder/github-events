@@ -402,6 +402,22 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a pull request review is submitted into a non-pending state, the body is
+    /// edited, or the review is dismissed.
+    PullRequestReviewEvent {
+        /// The action that was performed on the comment. Can be one of "created", "edited", or "deleted".
+        action: String,
+        /// The changes to the comment if the action was "edited".
+        /// `changes[body][from]: String` The previous version of the body if the action was "edited".
+        changes: serde_json::Value,
+        review: Review,
+        /// The [pull request](https://developer.github.com/v3/pulls/) the comment belongs to.
+        pull_request: PullRequest,
+        /// The [comment](https://developer.github.com/v3/pulls/comments) itself.
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1211,4 +1227,25 @@ struct Links {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct Link {
     href: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Review {
+    id: i64,
+    node_id: String,
+    user: User,
+    body: ::serde_json::Value,
+    commit_id: String,
+    submitted_at: String,
+    state: String,
+    html_url: String,
+    pull_request_url: String,
+    author_association: String,
+    _links: ReviewLinks,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct ReviewLinks {
+    html: Link,
+    pull_request: PullRequest,
 }
