@@ -418,6 +418,21 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a [comment on a pull request's unified diff](https://developer.github.com/v3/pulls/comments) is created, edited, or deleted (in the Files Changed tab).
+    PullRequestReviewCommentEvent {
+        /// The action that was performed on the comment. Can be one of "created", "edited", or "deleted".
+        action: String,
+        /// The [comment](https://developer.github.com/v3/pulls/comments) itself.
+        comment: Comment,
+        /// The changes to the comment if the action was "edited".
+        /// `changes[body][from]: String` The previous version of the body if the action was "edited".
+        changes: serde_json::Value,
+        ///	The [pull request](https://developer.github.com/v3/pulls/) the comment belongs to.
+        pull_request: PullRequest,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
