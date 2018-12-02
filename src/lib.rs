@@ -433,6 +433,40 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered on a push to a repository branch.
+    /// Branch pushes and repository tag pushes also trigger webhook [`push` events](https://developer.github.com/webhooks/#events).
+    ///		Note: The webhook payload example following the table differs significantly from
+    ///		theents API payload described in the table. Among other differences, the webhook
+    ///		payload includes both sender and pusher objects. Sender and pusher are the same user
+    ///		who initiated the push event, but the sender object contains more detail.
+    PushEvent {
+        // FIXME the note
+        /// The full Git ref that was pushed. Example: `refs/heads/master`.
+        #[serde(rename = "ref")]
+        ref_field: String,
+        /// The SHA of the most recent commit on `ref` after the push.
+        head: Option<String>,
+        /// The SHA of the most recent commit on `ref` before the push.
+        before: String,
+        after: String,
+        /// The number of commits in the push.
+        size: isize,
+        created: bool,
+        deleted: bool,
+        forced: bool,
+        base_ref: ::serde_json::Value,
+        compare: String,
+        /// An array of commit objects describing the pushed commits.
+        /// (The array includes a maximum of 20 commits.
+        /// If necessary, you can use the Commits API to fetch additional commits.
+        /// This limit is applied to timeline events only and isn't applied to webhook deliveries.)
+        commits: Vec<Commit>,
+        head_commit: ::serde_json::Value,
+        repository: Repository,
+        pusher: Pusher,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -705,7 +739,9 @@ struct HeadCommit {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct Author {
+    /// The git author's name.
     name: String,
+    /// The git author's email address.
     email: String,
 }
 
@@ -1263,4 +1299,18 @@ struct Review {
 struct ReviewLinks {
     html: Link,
     pull_request: PullRequest,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Commit {
+    /// The SHA of the commit.
+    sha: String,
+    /// The commit message.
+    message: String,
+    /// The git author of the commit.
+    author: Author,
+    /// URL that points to the commit API resource.
+    url: String,
+    /// Whether this commit is distinct from any that have been pushed before.
+    distinct: bool,
 }
