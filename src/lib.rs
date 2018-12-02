@@ -467,6 +467,17 @@ enum Event {
         pusher: Pusher,
         sender: Sender,
     },
+
+    /// Triggered when a
+    /// [release](https://developer.github.com/v3/repos/releases/#get-a-single-release) is published.
+    ReleaseEvent {
+        /// The action that was performed. Currently, can only be "published".
+        action: String,
+        /// The [release](https://developer.github.com/v3/repos/releases/#get-a-single-release) itself.
+        release: Release,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1313,4 +1324,49 @@ struct Commit {
     url: String,
     /// Whether this commit is distinct from any that have been pushed before.
     distinct: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Release {
+    url: String,
+    assets_url: String,
+    upload_url: String,
+    html_url: String,
+    id: i64,
+    node_id: String,
+    tag_name: String,
+    target_commitish: String,
+    name: ::serde_json::Value,
+    draft: bool,
+    author: ReleaseAuthor,
+    prerelease: bool,
+    created_at: String,
+    published_at: String,
+    assets: Vec<::serde_json::Value>,
+    tarball_url: String,
+    zipball_url: String,
+    body: ::serde_json::Value,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct ReleaseAuthor {
+    login: String,
+    id: i64,
+    node_id: String,
+    avatar_url: String,
+    gravatar_id: String,
+    url: String,
+    html_url: String,
+    followers_url: String,
+    following_url: String,
+    gists_url: String,
+    starred_url: String,
+    subscriptions_url: String,
+    organizations_url: String,
+    repos_url: String,
+    events_url: String,
+    received_events_url: String,
+    #[serde(rename = "type")]
+    type_field: String,
+    site_admin: bool,
 }
