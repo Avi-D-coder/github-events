@@ -478,6 +478,18 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a repository is created, archived, unarchived, made public, or made private.
+    /// [Organization hooks](https://developer.github.com/v3/orgs/hooks/) are also triggered when a repository is deleted.
+    ///
+    /// Events of this type are not visible in timelines. These events are only used to trigger hooks.
+    RepositoryEvent {
+        /// The action that was performed. This can be one of `created`, `deleted` (organization hooks only), `archived`, `unarchived`, `publicized`, or `privatized`.
+        action: String,
+        /// The [repository](https://developer.github.com/v3/repos/) itself.
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
