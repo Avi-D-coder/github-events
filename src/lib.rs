@@ -490,6 +490,23 @@ enum Event {
         repository: Repository,
         sender: Sender,
     },
+
+    /// Triggered when a successful or unsuccessful repository import finishes
+    /// for a GitHub organization or a personal repository.
+    /// To receive this event for a personal repository,
+    /// you must create an empty repository prior to the import.
+    /// This event can be triggered using either the [GitHub Importer](https://help.github.com/articles/importing-a-repository-with-github-importer/)
+    /// or the [Source imports API](https://developer.github.com/v3/migrations/source_imports/).
+    RepositoryImportEvent {
+        /// The final state of the import. This can be either `success` or `failure`.
+        status: String,
+        /// The [repository](https://developer.github.com/v3/repos/) you are importing.
+        repository: Repository,
+        /// The information about the organization where the imported repository will live.
+        organization: Organization,
+        /// The GitHub user who is importing the repository.
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
