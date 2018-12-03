@@ -507,6 +507,15 @@ enum Event {
         /// The GitHub user who is importing the repository.
         sender: Sender,
     },
+
+    /// Triggered when a [security alert](https://help.github.com/articles/about-security-alerts-for-vulnerable-dependencies/) is created, dismissed, or resolved.
+    RepositoryVulnerabilityAlertEvent {
+        /// The action that was performed. This can be one of `create`, `dismiss`, or `resolve`.
+        action: String,
+
+        /// The security alert of the vulnerable dependency.
+        alert: Alert,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1398,4 +1407,17 @@ struct ReleaseAuthor {
     #[serde(rename = "type")]
     type_field: String,
     site_admin: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Alert {
+    id: i64,
+    affected_range: String,
+    affected_package_name: String,
+    external_reference: String,
+    external_identifier: String,
+    fixed_in: String,
+    dismisser: User,
+    dismiss_reason: String,
+    dismissed_at: String,
 }
