@@ -516,6 +516,18 @@ enum Event {
         /// The security alert of the vulnerable dependency.
         alert: Alert,
     },
+
+    /// Triggered when a new security advisory is published, updated, or withdrawn.
+    /// A security advisory provides information about security-related vulnerabilities in software on GitHub.
+    /// Security Advisory webhooks are available to GitHub Apps only.
+    /// The security advisory dataset also powers the GitHub security alerts,
+    /// see "[About security alerts for vulnerable dependencies](https://help.github.com/articles/about-security-alerts-for-vulnerable-dependencies/)."
+    SecurityAdvisoryEvent {
+        /// The action that was performed. The action can be one of `published`, `updated`, or `performed` for all new events.
+        action: String,
+        /// The details of the security advisory, including summary, description, and severity.
+        security_advisory: SecurityAdvisory,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1420,4 +1432,49 @@ struct Alert {
     dismisser: User,
     dismiss_reason: String,
     dismissed_at: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct SecurityAdvisory {
+    ghsa_id: String,
+    summary: String,
+    description: String,
+    severity: String,
+    identifiers: Vec<Identifier>,
+    references: Vec<Reference>,
+    published_at: String,
+    updated_at: String,
+    withdrawn_at: ::serde_json::Value,
+    vulnerabilities: Vec<Vulnerability>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Identifier {
+    value: String,
+    #[serde(rename = "type")]
+    type_field: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Reference {
+    url: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Vulnerability {
+    package: Package,
+    severity: String,
+    vulnerable_version_range: String,
+    first_patched_version: FirstPatchedVersion,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Package {
+    ecosystem: String,
+    name: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct FirstPatchedVersion {
+    identifier: String,
 }
