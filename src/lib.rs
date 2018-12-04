@@ -528,6 +528,33 @@ enum Event {
         /// The details of the security advisory, including summary, description, and severity.
         security_advisory: SecurityAdvisory,
     },
+
+    /// Triggered when the status of a Git commit changes.
+    /// Events of this type are not visible in timelines. These events are only used to trigger hooks.
+    StatusEvent {
+        id: i64,
+        /// The Commit SHA.
+        sha: String,
+        name: String,
+        /// The optional link added to the status.
+        // FIXME will Option parse {}?
+        target_url: Option<String>,
+        context: String,
+        /// The optional human-readable description added to the status.
+        // FIXME will Option parse {}?
+        description: Option<String>,
+        /// The new state. Can be `pending`, `success`, `failure`, or `error`.
+        state: String,
+        commit: Commit,
+        /// An array of branch objects containing the status' SHA.
+        /// Each branch contains the given SHA, but the SHA may or may not be the head of the branch.
+        /// The array includes a maximum of 10 branches.
+        branches: Vec<Bran>,
+        created_at: String,
+        updated_at: String,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1477,4 +1504,62 @@ struct Package {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct FirstPatchedVersion {
     identifier: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct StatusEventCommitNode {
+    sha: String,
+    node_id: String,
+    commit: CommitTree,
+    url: String,
+    html_url: String,
+    comments_url: String,
+    author: AuthorDate,
+    committer: CommitterDate,
+    parents: Vec<::serde_json::Value>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct CommitTree {
+    author: AuthorDate,
+    committer: CommitterDate,
+    message: String,
+    tree: Tree,
+    url: String,
+    comment_count: i64,
+    verification: Verification,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct AuthorDate {
+    name: String,
+    email: String,
+    date: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct CommitterDate {
+    name: String,
+    email: String,
+    date: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Tree {
+    sha: String,
+    url: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Verification {
+    verified: bool,
+    reason: String,
+    signature: String,
+    payload: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+struct Bran {
+    name: String,
+    commit: Commit,
 }
