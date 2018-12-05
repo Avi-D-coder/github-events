@@ -596,6 +596,19 @@ enum Event {
         organization: Organization,
         sender: Sender,
     },
+
+    /// The WatchEvent is related to [starring a repository](https://developer.github.com/v3/activity/starring/#star-a-repository),
+    /// not [watching](https://developer.github.com/v3/activity/watching/).
+    /// See [this API blog post](https://developer.github.com/changes/2012-09-05-watcher-api/) for an explanation.
+    ///
+    /// The event’s actor is the [user](https://developer.github.com/v3/users/) who starred a repository,
+    /// and the event’s repository is the [repository](https://developer.github.com/v3/repos/) that was starred.
+    WatchEvent {
+        /// The action that was performed. Currently, can only be `started`.
+        action: String,
+        repository: Repository,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
