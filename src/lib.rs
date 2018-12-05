@@ -583,6 +583,19 @@ enum Event {
         organization: Organization,
         sender: Sender,
     },
+
+    /// Triggered when a [repository is added to a
+    /// team](https://developer.github.com/v3/teams/#add-or-update-team-repository).
+    ///
+    /// Events of this type are not visible in timelines. These events are only used to trigger hooks.
+    TeamAddEvent {
+        /// The [team](https://developer.github.com/v3/teams/) that was modified. Note: older events may not include this in the payload.
+        team: Team,
+        /// The [repository](https://developer.github.com/v3/repos/) that was added to this team.
+        repository: Repository,
+        organization: Organization,
+        sender: Sender,
+    },
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
