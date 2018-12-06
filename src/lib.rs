@@ -177,8 +177,8 @@ enum Event {
 
     /// Triggered when a GitHub App has been installed or uninstalled.
     InstallationEvent {
-        /// The action that was performed. Can be either "created" or "deleted".
-        action: String,
+        /// The action that was performed. Can be either `Created` or `Deleted`.
+        action: CreatedDeletedAction,
         /// The installation itself.
         installation: Installation,
         repositories: Vec<PartialRepository>,
