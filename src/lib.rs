@@ -186,8 +186,8 @@ enum Event {
     },
 
     InstallationRepositoriesEvent {
-        /// The action that was performed. Can be either "added" or "removed".
-        action: String,
+        /// The action that was performed. Can be either `Added` or `Removed`.
+        action: AddedRemovedAction,
         /// The installation itself.
         installation: Installation,
         /// The choice of repositories the installation is on. Can be either "selected" or "all".
