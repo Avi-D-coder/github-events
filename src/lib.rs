@@ -73,12 +73,11 @@ enum Event {
         check_suite: CheckSuite,
     },
 
-    /// Triggered when a [commit
-    /// comment](https://developer.github.com/v3/repos/comments/#list-commit-comments-for-a-repository) is created.
+    /// Triggered when a
+    /// [commit comment](https://developer.github.com/v3/repos/comments/#list-commit-comments-for-a-repository) is created.
     CommitCommentEvent {
-        action: String,
-        /// The
-        /// [comment](https://developer.github.com/v3/repos/comments/#list-commit-comments-for-a-repository) itself.
+        action: CreatedAction,
+        /// The [comment](https://developer.github.com/v3/repos/comments/#list-commit-comments-for-a-repository) itself.
         // FIXME
         comment: Comment,
         repository: Repository,
