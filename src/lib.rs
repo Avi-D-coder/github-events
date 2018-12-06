@@ -164,7 +164,7 @@ enum Event {
     /// For details about user-to-server requests, which require GitHub App authorization,
     /// see ["Identifying and authorizing users for GitHub Apps.](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/)"
     GitHubAppAuthorizationEvent {
-        action: String,
+        action: RevokedAction,
         sender: Sender,
     },
 
