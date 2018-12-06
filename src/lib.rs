@@ -5,6 +5,9 @@
 extern crate serde_derive;
 extern crate serde_json;
 
+mod actions;
+use actions::*;
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 enum Event {
     /// Triggered when a check run is `created`, `rerequested`, `completed`, or has a
@@ -27,9 +30,9 @@ enum Event {
     /// repository. Repositories and organizations that subscribe to the `check_run` webhook event
     /// only receive `created` and `completed` event actions.
     CheckRunEvent {
-        /// The action performed. Can be `created,` `rerequested,` `completed,`
-        /// or `requested_action.`
-        action: String,
+        /// The action performed.
+        /// Can be `Created,` `Rerequested,` `Completed,` or `RequestedAction`.
+        action: CheckActions,
         /// The [`check_run`](https://developer.github.com/v3/checks/runs/).
         check_run: CheckRun,
         ///
@@ -63,9 +66,9 @@ enum Event {
     /// webhook event only receive
     /// the `completed` event action.
     CheckSuiteEvent {
-        /// The action performed. Can be `created,` `rerequested,` `completed,`
-        /// or `requested_action.`
-        action: String,
+        /// The action performed.
+        /// Can be `Created,` `Rerequested,` `Completed,` or `RequestedAction.`
+        action: CheckActions,
         /// The [check_suite](https://developer.github.com/v3/checks/suites/).
         check_suite: CheckSuite,
     },
