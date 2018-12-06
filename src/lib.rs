@@ -200,8 +200,9 @@ enum Event {
     },
 
     IssueCommentEvent {
-        /// The action that was performed on the comment. Can be one of "created", "edited", or "deleted".
-        action: String,
+        /// The action that was performed on the comment.
+        /// Can be one of `Created`, `Edited`, or `Deleted`.
+        action: CrEdDelAction,
         /// The changes to the comment if the action was "edited".
         /// `changes[body][from]: String` The changes to the comment if the action was "edited".
         // FIXME it's unclear what the structure of changes is.
@@ -217,8 +218,9 @@ enum Event {
     IssueEvent(IssueEvent),
 
     LabelEvent {
-        /// The action that was performed. Can be "created", "edited", or "deleted".
-        action: String,
+        /// The action that was performed on the comment.
+        /// Can be one of `Created`, `Edited`, or `Deleted`.
+        action: CrEdDelAction,
         /// The label that was added.
         label: Label,
         /// The changes to the label if the action was "edited".
