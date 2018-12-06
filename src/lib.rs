@@ -6,7 +6,6 @@ extern crate serde_derive;
 extern crate serde_json;
 
 mod actions;
-use actions::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 enum Event {
@@ -32,7 +31,7 @@ enum Event {
     CheckRunEvent {
         /// The action performed.
         /// Can be `Created,` `Rerequested,` `Completed,` or `RequestedAction`.
-        action: CheckActions,
+        action: actions::Check,
         /// The [`check_run`](https://developer.github.com/v3/checks/runs/).
         check_run: CheckRun,
         ///
@@ -68,7 +67,7 @@ enum Event {
     CheckSuiteEvent {
         /// The action performed.
         /// Can be `Created,` `Rerequested,` `Completed,` or `RequestedAction.`
-        action: CheckActions,
+        action: actions::Check,
         /// The [check_suite](https://developer.github.com/v3/checks/suites/).
         check_suite: CheckSuite,
     },
@@ -76,7 +75,7 @@ enum Event {
     /// Triggered when a
     /// [commit comment](https://developer.github.com/v3/repos/comments/#list-commit-comments-for-a-repository) is created.
     CommitCommentEvent {
-        action: CreatedAction,
+        action: actions::Created,
         /// The [comment](https://developer.github.com/v3/repos/comments/#list-commit-comments-for-a-repository) itself.
         // FIXME
         comment: Comment,
@@ -164,7 +163,7 @@ enum Event {
     /// For details about user-to-server requests, which require GitHub App authorization,
     /// see ["Identifying and authorizing users for GitHub Apps.](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/)"
     GitHubAppAuthorizationEvent {
-        action: RevokedAction,
+        action: actions::Revoked,
         sender: Sender,
     },
 
@@ -178,7 +177,7 @@ enum Event {
     /// Triggered when a GitHub App has been installed or uninstalled.
     InstallationEvent {
         /// The action that was performed. Can be either `Created` or `Deleted`.
-        action: CreatedDeletedAction,
+        action: actions::CreatedDeleted,
         /// The installation itself.
         installation: Installation,
         repositories: Vec<PartialRepository>,
@@ -187,7 +186,7 @@ enum Event {
 
     InstallationRepositoriesEvent {
         /// The action that was performed. Can be either `Added` or `Removed`.
-        action: AddedRemovedAction,
+        action: actions::AddedRemoved,
         /// The installation itself.
         installation: Installation,
         /// The choice of repositories the installation is on. Can be either "selected" or "all".
@@ -202,7 +201,7 @@ enum Event {
     IssueCommentEvent {
         /// The action that was performed on the comment.
         /// Can be one of `Created`, `Edited`, or `Deleted`.
-        action: CrEdDelAction,
+        action: actions::CrEdDel,
         /// The changes to the comment if the action was "edited".
         /// `changes[body][from]: String` The changes to the comment if the action was "edited".
         // FIXME it's unclear what the structure of changes is.
@@ -220,7 +219,7 @@ enum Event {
     LabelEvent {
         /// The action that was performed on the comment.
         /// Can be one of `Created`, `Edited`, or `Deleted`.
-        action: CrEdDelAction,
+        action: actions::CrEdDel,
         /// The label that was added.
         label: Label,
         /// The changes to the label if the action was "edited".
