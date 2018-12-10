@@ -563,8 +563,9 @@ enum Event {
     ///
     /// Events of this type are not visible in timelines. These events are only used to trigger organization hooks.
     TeamEvent {
-        /// The action that was performed. Can be one of `created`, `deleted`, `edited`, `added_to_repository`, or `removed_from_repository`.
-        action: String,
+        /// The action that was performed.
+        /// Can be one of `Created`, `Deleted`, `Edited`, `AddedToRepository`, or `RemovedFromRepository`.
+        action: actions::TeamEvent,
         /// The team itself.
         team: Team,
         /// The changes to the team if the action was "edited".
